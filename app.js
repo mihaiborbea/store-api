@@ -9,6 +9,7 @@ const mongoose = require('mongoose');
 
 const indexRouter = require('./routes/index.route');
 const usersRouter = require('./routes/users.route');
+const productsRouter = require('./routes/products.route');
 
 const app = express();
 
@@ -46,11 +47,12 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
 // Static folder
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(__dirname + '/public'));
 
 // Routes
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+app.use('/products', productsRouter);
 
 
 // Error handling

@@ -6,14 +6,14 @@ var ProductSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  img_url: {
+  imgURL: {
     type: String
   },
   description: {
     type: String
   },
   availableQuantity: {
-    type: number,
+    type: Number,
     required: true
   },
   store: {
@@ -36,7 +36,8 @@ var ProductSchema = new mongoose.Schema({
       'TOYS',
       'HOME',
       'COSMETICS'
-    ]
+    ],
+    required: true
   }
 });
 
