@@ -60,57 +60,56 @@ exports.create = async function (req, res, next) {
   }
 };
 
-// exports.login = async function (req, res, next) {
-//   try {
-//     const user = await UsersService.getItem({ email: req.body.email });
-//     if (!user) {
-//       return res.status(401).json({
-//         status: 401,
-//         message: 'Auth failed'
-//       });
-//     }
-//     const matches = await bcrypt.compare(req.body.password, user.password);
-//     if (!matches) {
-//       return res.status(401).json({
-//         status: 401,
-//         message: 'Auth failed'
-//       });
-//     }
-//     const token = jwt.sign(
-//       {
-//         userId: user._id
-//       },
-//       process.env.JWT_SECRET,
-//       {
-//         expiresIn: "2h"
-//       }
-//     );
-//     const loggedUser = {
-//       _id: user._id,
-//       firstName: user.firstName,
-//       lastName: user.lastName,
-//       email: user.email,
-//       country: user.country,
-//       city: user.city,
-//       address: user.address,
-//       phone: user.phone,
-//       type: user.type
-//     }
-//     return res.status(200).json({
-//       status: 200,
-//       message: "Auth successful",
-//       result: {
-//         user: loggedUser,
-//         token: token
-//       }
-//     })
-//   } catch (err) {
-//     return res.status(404).json({
-//       status: 401,
-//       message: "Auth failed"
-//     });
-//   }
-// }
+exports.getList = async function (req, res, next) {
+  const options = {
+    page: req.query.page ? req.query.page : 1,
+    limit: req.query.limit ? req.query.limit : 100,
+    populate: req.query.include
+  };
+  let query = {};
+  if (req.query.filter) {
+    query = req.query.filter
+  }
+  if (req.query.sort) {
+    options.sort = req.query.sort;
+  }
+  try {
+    const products = await ProductsService.getList(query, options);
+    return res.status(200).json({
+      status: 200,
+      result: products
+    });
+  } catch (e) {
+    return res.status(400).json({
+      status: 400,
+      message: e.message
+    });
+  }
+}
+
+exports.getItem = async function (req, res, next) {
+  let id;
+  if (req.params.id) {
+    id = req.params.id;
+  } else {
+    return res.status(400).json({
+      status: 400,
+      message: 'Id is mandatory'
+    });
+  }
+  try {
+    const user = await ProductsService.getById(id);
+    return res.status(200).json({
+      status: 200,
+      result: user
+    });
+  } catch (e) {
+    return res.status(400).json({
+      status: 400,
+      message: e.message
+    });
+  }
+}
 
 // exports.edit = async function (req, res, next) {
 //   if (!req.params.id) {
@@ -119,9 +118,7 @@ exports.create = async function (req, res, next) {
 //       message: 'Id of the user is required'
 //     });
 //   }
-
 //   const id = req.params.id;
-
 //   const user = {
 //     id,
 //     firstName: req.body.firstName ? req.body.firstName : null,
@@ -132,7 +129,6 @@ exports.create = async function (req, res, next) {
 //     address: req.body.address ? req.body.address : null,
 //     phone: req.body.phone ? req.body.phone : null,
 //   };
-
 //   if (req.body.type) {
 //     const newType = ['CUSTOMER', 'SELLER', 'ADMIN']
 //       .find((el) => el === req.body.type);
@@ -147,14 +143,12 @@ exports.create = async function (req, res, next) {
 //   } else {
 //     user.type = null;
 //   }
-
 //   if (req.body.password) {
 //     const hash = await bcrypt.hash(req.body.password, 10);
 //     user.password = hash;
 //   } else {
 //     user.password = null;
 //   }
-
 //   try {
 //     const updatedUser = await UsersService.update(user);
 //     return res.status(201).json({
@@ -177,9 +171,7 @@ exports.create = async function (req, res, next) {
 //       message: 'Id of the user is required'
 //     });
 //   }
-
 //   const id = req.params.id;
-
 //   try {
 //     await UsersService.delete(id);
 //     return res.status(201).json({
@@ -193,58 +185,3 @@ exports.create = async function (req, res, next) {
 //     });
 //   }
 // };
-
-// exports.getList = async function (req, res, next) {
-//   const options = {
-//     page: req.query.page ? req.query.page : 1,
-//     limit: req.query.limit ? req.query.limit : 100,
-//   };
-
-//   let query = {};
-
-//   if (req.query.filter) {
-//     query = req.query.filter
-//   }
-
-//   if (req.query.sort) {
-//     options.sort = req.query.sort;
-//   }
-
-
-//   try {
-//     const users = await UsersService.getList(query, options);
-//     return res.status(200).json({
-//       status: 200,
-//       result: users
-//     });
-//   } catch (e) {
-//     return res.status(400).json({
-//       status: 400,
-//       message: e.message
-//     });
-//   }
-// }
-
-// exports.getItem = async function (req, res, next) {
-//   let id;
-//   if (req.params.id) {
-//     id = req.params.id;
-//   } else {
-//     return res.status(400).json({
-//       status: 400,
-//       message: 'Id is mandatory'
-//     });
-//   }
-//   try {
-//     const user = await UsersService.getById(id);
-//     return res.status(200).json({
-//       status: 200,
-//       result: user
-//     });
-//   } catch (e) {
-//     return res.status(400).json({
-//       status: 400,
-//       message: e.message
-//     });
-//   }
-// }

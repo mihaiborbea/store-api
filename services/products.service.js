@@ -19,6 +19,28 @@ exports.create = async function (product) {
   }
 };
 
+exports.getById = async function (id, callback) {
+  return ProductModel.findById(id, callback);
+};
+
+exports.getByEmail = async function (email, callback) {
+  const query = { email: email };
+  return ProductModel.findOne(query, callback);
+};
+
+exports.getItem = async function (query, callback) {
+  return ProductModel.findOne(query, callback);
+}
+
+exports.getList = async function (query, options) {
+  try {
+    const products = await ProductModel.paginate(query, options);
+    return products;
+  } catch (e) {
+    throw Error('Error while paginating products');
+  }
+}
+
 // exports.update = async function (user) {
 //   const id = user.id;
 //   let oldUser;
@@ -58,25 +80,3 @@ exports.create = async function (product) {
 //     throw Error('Error occured while deleting the user');
 //   }
 // };
-
-// exports.getById = async function (id, callback) {
-//   return UserModel.findById(id, callback);
-// };
-
-// exports.getByEmail = async function (email, callback) {
-//   const query = { email: email };
-//   return UserModel.findOne(query, callback);
-// };
-
-// exports.getItem = async function (query, callback) {
-//   return UserModel.findOne(query, callback);
-// }
-
-// exports.getList = async function (query, options) {
-//   try {
-//     const users = await UserModel.paginate(query, options);
-//     return users;
-//   } catch (e) {
-//     throw Error('Error while paginating users');
-//   }
-// }
