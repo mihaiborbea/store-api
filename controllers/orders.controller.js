@@ -152,7 +152,7 @@ exports.edit = async function (req, res, next) {
     }
     return res.status(201).json({
       status: 201,
-      result: updatedOrder,
+      result: updatedOrder.populate('owner'),
       message: 'Order updated succesfully'
     });
   } catch (e) {

@@ -22,11 +22,11 @@ exports.getById = async function (id, callback) {
 
 exports.getByEmail = async function (email, callback) {
   const query = { email: email };
-  return OrderModel.findOne(query, callback).populate('owner');
+  return OrderModel.findOne(query).deepPopulate('owner products.product');
 };
 
 exports.getItem = async function (query, callback) {
-  return OrderModel.findOne(query, callback).populate('owner');
+  return OrderModel.findOne(query).deepPopulate('owner products.product');
 }
 
 exports.getList = async function (query, options) {
@@ -59,7 +59,7 @@ exports.update = async function (order) {
 
   try {
     const savedOrder = await oldOrder.save();
-    return savedOrder;
+    return savedOrder.deepPopulate('owner products.product');
   } catch (e) {
     throw Error('An error occured while updating the order');
   }
