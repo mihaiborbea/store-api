@@ -167,8 +167,8 @@ exports.delete = async function (req, res, next) {
 
   try {
     await UsersService.delete(id);
-    return res.status(204).json({
-      status: 204,
+    return res.status(201).json({
+      status: 201,
       message: 'Users deleted successfully'
     });
   } catch (e) {
@@ -187,11 +187,11 @@ exports.getList = async function (req, res, next) {
 
   let query = {};
 
-  if(req.query.filter) {
+  if (req.query.filter) {
     query = req.query.filter
   }
 
-  if(req.query.sort) {
+  if (req.query.sort) {
     options.sort = req.query.sort;
   }
 
@@ -211,17 +211,20 @@ exports.getList = async function (req, res, next) {
 }
 
 exports.getItem = async function (req, res, next) {
-  let query = {};
-
-  if(req.query.id) {
-    query.id = req.params.id;
+  let id;
+  if (req.params.id) {
+    id = req.params.id;
+  } else {
+    return res.status(400).json({
+      status: 400,
+      message: 'Id is mandatory'
+    });
   }
-
   try {
-    const users = await UsersService.getItem(query);
+    const user = await UsersService.getById(id);
     return res.status(200).json({
       status: 200,
-      result: users
+      result: user
     });
   } catch (e) {
     return res.status(400).json({

@@ -23,10 +23,11 @@ exports.create = async function (user) {
 
 
 exports.update = async function (user) {
-  var id = user.id;
+  const id = user.id;
+  let oldUser;
 
   try {
-    var oldUser = await UserModel.findById(id);
+    oldUser = await UserModel.findById(id);
   } catch (e) {
     throw Error('User could not be found');
   }
@@ -46,7 +47,7 @@ exports.update = async function (user) {
   oldUser.type = user.type || oldUser.type;
 
   try {
-    var savedUser = await oldUser.save();
+    const savedUser = await oldUser.save();
     return savedUser;
   } catch (e) {
     throw Error('An error occured while updating the user');
@@ -55,11 +56,7 @@ exports.update = async function (user) {
 
 exports.delete = async function (id) {
   try {
-    var deleted = await ToDoModel.remove({ _id: id });
-    if (deleted.result.n === 0) {
-      throw Error('User could not be deleted');
-    }
-    return deleted.result.n;
+    const deleted = await UserModel.findOneAndRemove({ _id: id });
   } catch (e) {
     throw Error('Error occured while deleting the user');
   }

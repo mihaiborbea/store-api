@@ -1,7 +1,7 @@
-var express = require('express');
+const express = require('express');
 
-var router = express.Router();
-var UsersController = require('../controllers/users.controller');
+const router = express.Router();
+const UsersController = require('../controllers/users.controller');
 
 // Map each API to the Controller FUnctions
 
