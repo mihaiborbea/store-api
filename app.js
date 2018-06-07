@@ -14,8 +14,6 @@ const productsRouter = require('./routes/products.route');
 
 const app = express();
 
-app.use(fileUpload());
-
 dotenv.config();
 
 // DB connection
@@ -39,6 +37,8 @@ app.use(function(req, res, next) {
   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS');
   next();
 });
+
+app.use(fileUpload());
 
 // Logger
 app.use(logger('dev'));
