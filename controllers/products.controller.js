@@ -28,7 +28,7 @@ exports.create = async function (req, res, next) {
           });
         }
       });
-    const imageURL = 'http://localhost:3000/public/uploads/' + userId + date.getTime() + req.files.image.name;
+    const imageURL = 'http://localhost:3000/public/images/' + userId + date.getTime() + req.files.image.name;
 
     const product = {
       name: req.body.name,
@@ -98,10 +98,10 @@ exports.getItem = async function (req, res, next) {
     });
   }
   try {
-    const user = await ProductsService.getById(id);
+    const product = await ProductsService.getById(id);
     return res.status(200).json({
       status: 200,
-      result: user
+      result: product
     });
   } catch (e) {
     return res.status(400).json({

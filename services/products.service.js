@@ -3,7 +3,7 @@ const ProductModel = require('../models/product.model');
 exports.create = async function (product) {
   const newProduct = new ProductModel({
     name: product.name,
-    imageURL: product.imageURL || '',
+    imageURL: product.imageURL,
     description: product.description || '',
     availableQuantity: product.availableQuantity,
     store: product.store,
