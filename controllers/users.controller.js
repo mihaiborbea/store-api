@@ -96,3 +96,85 @@ exports.login = async function (req, res, next) {
     });
   }
 }
+
+exports.edit = async function (req, res, next) {
+  if (!req.params.id) {
+    return res.status(400).json({
+      status: 400,
+      message: 'Id of the user is required'
+    });
+  }
+
+  const id = req.params.id;
+
+  const user = {
+    id,
+    firstName: req.body.firstName ? req.body.firstName : null,
+    lastName: req.body.lastName ? req.body.lastName : null,
+    email: req.body.email ? req.body.email : null,
+    country: req.body.country ? req.body.country : null,
+    city: req.body.city ? req.body.city : null,
+    address: req.body.address ? req.body.address : null,
+    phone: req.body.phone ? req.body.phone : null,
+  };
+
+  if (req.body.type) {
+    const newType = ['CUSTOMER', 'SELLER', 'ADMIN']
+      .find((el) => el === req.body.type);
+    if (newType) {
+      user.type = newType
+    } else {
+      return res.status(400).json({
+        status: 400,
+        message: 'The new user type is invalid'
+      });
+    }
+  } else {
+    user.type = null;
+  }
+
+  if (req.body.password) {
+    const hash = await bcrypt.hash(req.body.password, 10);
+    user.password = hash;
+  } else {
+    user.password = null;
+  }
+
+  try {
+    const updatedUser = await UsersService.update(user);
+    return res.status(200).json({
+      status: 200,
+      result: updatedUser,
+      message: 'User updated succesfully'
+    });
+  } catch (e) {
+    return res.status(400).json({
+      status: 400,
+      message: e.message
+    });
+  }
+};
+
+exports.delete = async function (req, res, next) {
+  if (!req.params.id) {
+    return res.status(400).json({
+      status: 400,
+      message: 'Id of the user is required'
+    });
+  }
+
+  const id = req.params.id;
+
+  try {
+    await UsersService.delete(id);
+    return res.status(204).json({
+      status: 204,
+      message: 'Users deleted successfully'
+    });
+  } catch (e) {
+    return res.status(400).json({
+      status: 400,
+      message: e.message
+    });
+  }
+};
