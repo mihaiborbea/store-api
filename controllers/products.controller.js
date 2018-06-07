@@ -1,14 +1,44 @@
+const express = require('express');
+const fileUpload = require('express-fileupload');
+
+const app = express();
+
+app.use(fileUpload());
+
 const UserModel = require('../models/user.model');
 const ProductsService = require('../services/products.service');
 
 exports.create = async function (req, res, next) {
   try {
     const userId = req.get('userId');
-    console.log(userId);
     const user = await UserModel.findById(userId);
+    const date = new Date();
+
+    if (!req.files)
+      return res.status(400).send('No files were uploaded.');
+
+    // The name of the input field (i.e. "sampleFile") is used to retrieve the uploaded file
+    let file = req.files.image;
+    console.log(file.name);
+
+    // Use the mv() method to place the file somewhere on your server
+    file.mv(
+      '/var/www/store-api/public/images/' + userId + date.getTime() + req.files.image.name,
+      function (err) {
+        if (err) {
+          return res.status(500).json({
+            status: 500,
+            message: 'No file uploaded'
+          });
+        }
+      });
+
+    const imageURL = 'http://localhost:3000/public/uploads/' + userId + date.getTime() + req.files.image.name;
+    console.log(imageURL);
+
     const product = {
       name: req.body.name,
-      imgURL: req.body.imgURL || null,
+      imageURL: imageURL,
       description: req.body.description || null,
       availableQuantity: req.body.availableQuantity,
       store: userId,
@@ -30,6 +60,7 @@ exports.create = async function (req, res, next) {
     }
   } catch (e) {
     return res.status(500).json({
+      status: 500,
       message: 'Invalid User'
     });
   }

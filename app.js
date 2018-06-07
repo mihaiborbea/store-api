@@ -6,12 +6,15 @@ const express = require('express');
 const path = require('path');
 const logger = require('morgan');
 const mongoose = require('mongoose');
+const fileUpload = require('express-fileupload');
 
 const indexRouter = require('./routes/index.route');
 const usersRouter = require('./routes/users.route');
 const productsRouter = require('./routes/products.route');
 
 const app = express();
+
+app.use(fileUpload());
 
 dotenv.config();
 
