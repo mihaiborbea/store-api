@@ -6,7 +6,7 @@ const UsersService = require('../services/users.service');
 
 exports.register = async function (req, res, next) {
   try {
-    const testEmail = await UsersService.getByEmail(req.body.email);
+    const testEmail = await UsersService.getItem({ email: req.body.email });
     if (testEmail) {
       return res.status(409).json({
         status: 409,
@@ -28,7 +28,7 @@ exports.register = async function (req, res, next) {
       const createdUser = await UsersService.create(user);
       return res.status(200).json({
         status: 201,
-        result: createdUser,
+        result: { user: createdUser },
         message: 'User registered succesfully'
       });
     } catch (e) {
@@ -47,7 +47,7 @@ exports.register = async function (req, res, next) {
 
 exports.login = async function (req, res, next) {
   try {
-    const user = await UsersService.getByEmail(req.body.email);
+    const user = await UsersService.getItem({ email: req.body.email });
     if (!user) {
       return res.status(401).json({
         status: 401,
@@ -142,8 +142,8 @@ exports.edit = async function (req, res, next) {
 
   try {
     const updatedUser = await UsersService.update(user);
-    return res.status(200).json({
-      status: 200,
+    return res.status(201).json({
+      status: 201,
       result: updatedUser,
       message: 'User updated succesfully'
     });
@@ -178,3 +178,55 @@ exports.delete = async function (req, res, next) {
     });
   }
 };
+
+exports.getList = async function (req, res, next) {
+  const options = {
+    page: req.query.page ? req.query.page : 1,
+    limit: req.query.limit ? req.query.limit : 100,
+  };
+
+  let query = {};
+
+  if(req.query.filter) {
+    query = req.query.filter
+  }
+
+  if(req.query.sort) {
+    options.sort = req.query.sort;
+  }
+
+
+  try {
+    const users = await UsersService.getList(query, options);
+    return res.status(200).json({
+      status: 200,
+      result: users
+    });
+  } catch (e) {
+    return res.status(400).json({
+      status: 400,
+      message: e.message
+    });
+  }
+}
+
+exports.getItem = async function (req, res, next) {
+  let query = {};
+
+  if(req.query.id) {
+    query.id = req.params.id;
+  }
+
+  try {
+    const users = await UsersService.getItem(query);
+    return res.status(200).json({
+      status: 200,
+      result: users
+    });
+  } catch (e) {
+    return res.status(400).json({
+      status: 400,
+      message: e.message
+    });
+  }
+}

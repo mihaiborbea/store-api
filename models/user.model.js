@@ -1,4 +1,5 @@
 var mongoose = require('mongoose');
+var mongoosePaginate = require('mongoose-paginate');
 
 var UserSchema = new mongoose.Schema({
   firstName: {
@@ -42,6 +43,7 @@ var UserSchema = new mongoose.Schema({
   }
 });
 
+UserSchema.plugin(mongoosePaginate);
 const UserModel = mongoose.model('User', UserSchema);
 
 module.exports = UserModel;

@@ -74,9 +74,13 @@ exports.getByEmail = async function (email, callback) {
   return UserModel.findOne(query, callback);
 };
 
+exports.getItem = async function (query, callback) {
+  return UserModel.findOne(query, callback);
+}
+
 exports.getList = async function (query, options) {
   try {
-    const users = UserModel.paginate(query, options);
+    const users = await UserModel.paginate(query, options);
     return users;
   } catch (e) {
     throw Error('Error while paginating users');
