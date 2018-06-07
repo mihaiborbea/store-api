@@ -1,5 +1,6 @@
 var mongoose = require('mongoose');
 var mongoosePaginate = require('mongoose-paginate');
+var deepPopulate = require('mongoose-deep-populate')(mongoose);
 
 var OrderSchema = new mongoose.Schema({
   owner:{
@@ -25,6 +26,7 @@ var OrderSchema = new mongoose.Schema({
 });
 
 OrderSchema.plugin(mongoosePaginate);
+OrderSchema.plugin(deepPopulate);
 const OrderModel = mongoose.model('Order', OrderSchema);
 
 module.exports = OrderModel;

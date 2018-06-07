@@ -16,16 +16,17 @@ exports.create = async function (order) {
 };
 
 exports.getById = async function (id, callback) {
-  return OrderModel.findById(id, callback).populate('products.product');
+  // Post.find().deepPopulate('comments.user').exec(function (err, posts)
+  return OrderModel.findById(id).deepPopulate('owner products.product');
 };
 
 exports.getByEmail = async function (email, callback) {
   const query = { email: email };
-  return OrderModel.findOne(query, callback).populate('products.product');
+  return OrderModel.findOne(query, callback).populate('owner');
 };
 
 exports.getItem = async function (query, callback) {
-  return OrderModel.findOne(query, callback).populate('products.product');
+  return OrderModel.findOne(query, callback).populate('owner');
 }
 
 exports.getList = async function (query, options) {

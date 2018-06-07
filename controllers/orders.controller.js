@@ -1,7 +1,7 @@
 const UserModel = require('../models/user.model');
 const ProductModel = require('../models/product.model');
 const ProductsService = require('../services/products.service');
-const OrderService = require('../services/orders.service');
+const OrdersService = require('../services/orders.service');
 
 exports.create = async function (req, res, next) {
   try {
@@ -12,7 +12,7 @@ exports.create = async function (req, res, next) {
       owner: userId,
     };
     try {
-      const createdOrder = await OrderService.create(order);
+      const createdOrder = await OrdersService.create(order);
       return res.status(200).json({
         status: 201,
         result: createdOrder,
@@ -33,23 +33,35 @@ exports.create = async function (req, res, next) {
 };
 
 exports.getList = async function (req, res, next) {
+  const userId = req.get('userId');
+  let user;
+  try {
+    user = await UserModel.findById(userId);
+  } catch (e) {
+    return res.status(400).json({
+      status: 400,
+      message: 'Invalid user'
+    });
+  }
+
   const options = {
     page: req.query.page ? req.query.page : 1,
     limit: req.query.limit ? req.query.limit : 100,
-    populate: 'store'
+    populate: ['owner', 'products.product']
   };
   let query = {};
   if (req.query.filter) {
     query = req.query.filter
   }
+  query.owner = userId;
   if (req.query.sort) {
     options.sort = req.query.sort;
   }
   try {
-    const products = await ProductsService.getList(query, options);
+    const orders = await OrdersService.getList(query, options);
     return res.status(200).json({
       status: 200,
-      result: products
+      result: orders
     });
   } catch (e) {
     return res.status(400).json({
@@ -60,6 +72,16 @@ exports.getList = async function (req, res, next) {
 }
 
 exports.getItem = async function (req, res, next) {
+  const userId = req.get('userId');
+  let user;
+  try {
+    user = await UserModel.findById(userId);
+  } catch (e) {
+    return res.status(400).json({
+      status: 400,
+      message: 'Invalid user'
+    });
+  }
   let id;
   if (req.params.id) {
     id = req.params.id;
@@ -70,10 +92,10 @@ exports.getItem = async function (req, res, next) {
     });
   }
   try {
-    const product = await ProductsService.getById(id);
+    const order = await OrdersService.getById(id);
     return res.status(200).json({
       status: 200,
-      result: product
+      result: order
     });
   } catch (e) {
     return res.status(400).json({
@@ -96,24 +118,16 @@ exports.edit = async function (req, res, next) {
   };
   let feProds;
   let beProds = [];
-  if(req.body.products) {
+  if (req.body.products) {
     feProds = req.body.products;
   }
   if (feProds && feProds.length > 0) {
-    feProds.forEach(async (element) => {
-      try{
-        await ProductModel.findById(element.product.id);
-        tempProd = {
-          product: element.product.id,
+    feProds.forEach((element) => {
+        const tempProd = {
+          product: { _id: element.product._id },
           quantity: element.quantity
         };
         beProds.push(tempProd);
-      } catch(e) {
-        return res.status(400).json({
-          status: 400,
-          message: 'Invalid products found'
-        });
-      }
     });
   }
   order.products = beProds;
@@ -132,9 +146,9 @@ exports.edit = async function (req, res, next) {
     order.status = null;
   }
   try {
-    const updatedOrder = await OrderService.update(order);
-    if(updatedOrder.status === 'DONE') {
-      await OrderService.create({owner: updatedOrder.owner});
+    const updatedOrder = await OrdersService.update(order);
+    if (updatedOrder.status === 'DONE') {
+      await OrdersService.create({ owner: updatedOrder.owner });
     }
     return res.status(201).json({
       status: 201,
