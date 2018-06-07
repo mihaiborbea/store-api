@@ -92,13 +92,22 @@ exports.edit = async function (req, res, next) {
   }
   const id = req.params.id;
   const order = {
-    id,
-    products: req.body.products ? req.body.products : []
+    id
   };
-  if (order.products && order.products.length > 0) {
-    order.products.forEach(async (element) => {
+  let feProds;
+  let beProds = [];
+  if(req.body.products) {
+    feProds = req.body.products;
+  }
+  if (feProds && feProds.length > 0) {
+    feProds.forEach(async (element) => {
       try{
-        await ProductModel.findById(element.id);
+        await ProductModel.findById(element.product.id);
+        tempProd = {
+          product: element.product.id,
+          quantity: element.quantity
+        };
+        beProds.push(tempProd);
       } catch(e) {
         return res.status(400).json({
           status: 400,
@@ -107,6 +116,7 @@ exports.edit = async function (req, res, next) {
       }
     });
   }
+  order.products = beProds;
   if (req.body.status) {
     const newStatus = ['ACTIVE', 'DONE']
       .find((el) => el === req.body.status);
@@ -123,6 +133,9 @@ exports.edit = async function (req, res, next) {
   }
   try {
     const updatedOrder = await OrderService.update(order);
+    if(updatedOrder.status === 'DONE') {
+      await OrderService.create({owner: updatedOrder.owner});
+    }
     return res.status(201).json({
       status: 201,
       result: updatedOrder,
