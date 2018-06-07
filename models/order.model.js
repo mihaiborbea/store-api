@@ -1,24 +1,30 @@
 var mongoose = require('mongoose');
 var mongoosePaginate = require('mongoose-paginate');
 
-var ProductSchema = new mongoose.Schema({
+var OrderSchema = new mongoose.Schema({
   owner:{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
     required: true
   },
-  products: any[],
+  products: [{
+    product: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Product'
+    },
+    quantity: Number
+  }],
   status: {
     type: String,
     enum: [
       'DONE',
       'ACTIVE'
     ],
-    required: true
+    default: 'ACTIVE'
   }
 });
 
-ProductSchema.plugin(mongoosePaginate);
-const ProductModel = mongoose.model('Product', ProductSchema);
+OrderSchema.plugin(mongoosePaginate);
+const OrderModel = mongoose.model('Order', OrderSchema);
 
-module.exports = ProductModel;
+module.exports = OrderModel;

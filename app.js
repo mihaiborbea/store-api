@@ -11,6 +11,7 @@ const fileUpload = require('express-fileupload');
 const indexRouter = require('./routes/index.route');
 const usersRouter = require('./routes/users.route');
 const productsRouter = require('./routes/products.route');
+const ordersRouter = require('./routes/orders.route');
 
 const app = express();
 
@@ -56,6 +57,7 @@ app.use('/public', express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/products', productsRouter);
+app.use('/orders', ordersRouter);
 
 
 // Error handling
