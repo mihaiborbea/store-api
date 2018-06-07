@@ -64,7 +64,7 @@ exports.getList = async function (req, res, next) {
   const options = {
     page: req.query.page ? req.query.page : 1,
     limit: req.query.limit ? req.query.limit : 100,
-    populate: req.query.include
+    populate: 'store'
   };
   let query = {};
   if (req.query.filter) {

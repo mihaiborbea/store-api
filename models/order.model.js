@@ -6,7 +6,8 @@ var ProductSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
     required: true
-  }
+  },
+  products: any[],
   status: {
     type: String,
     enum: [

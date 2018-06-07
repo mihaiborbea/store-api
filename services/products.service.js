@@ -20,16 +20,16 @@ exports.create = async function (product) {
 };
 
 exports.getById = async function (id, callback) {
-  return ProductModel.findById(id, callback);
+  return ProductModel.findById(id, callback).populate('store');
 };
 
 exports.getByEmail = async function (email, callback) {
   const query = { email: email };
-  return ProductModel.findOne(query, callback);
+  return ProductModel.findOne(query, callback).populate('store');
 };
 
 exports.getItem = async function (query, callback) {
-  return ProductModel.findOne(query, callback);
+  return ProductModel.findOne(query, callback).populate('store');
 }
 
 exports.getList = async function (query, options) {
