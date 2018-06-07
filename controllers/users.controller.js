@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken');
 
 const UserModel = require('../models/user.model');
 const UsersService = require('../services/users.service');
+const OrdersService = require('../services/orders.service');
 
 exports.register = async function (req, res, next) {
   try {
@@ -26,6 +27,7 @@ exports.register = async function (req, res, next) {
     };
     try {
       const createdUser = await UsersService.create(user);
+      await OrdersService.create({owner: createdUser.id});
       return res.status(200).json({
         status: 201,
         result: { user: createdUser },

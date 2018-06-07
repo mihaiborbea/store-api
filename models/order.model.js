@@ -25,8 +25,8 @@ var OrderSchema = new mongoose.Schema({
   }
 });
 
+OrderSchema.plugin(deepPopulate, {populate: 'owner products.product'});
 OrderSchema.plugin(mongoosePaginate);
-OrderSchema.plugin(deepPopulate);
 const OrderModel = mongoose.model('Order', OrderSchema);
 
 module.exports = OrderModel;
